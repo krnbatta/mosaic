@@ -73,6 +73,7 @@ class DestinationImageComponent {
             }
             svgImg.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(tile.svg);
         });
+        //free tile row now!
     }
 }
 export default DestinationImageComponent;

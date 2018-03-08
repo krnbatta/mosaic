@@ -2,9 +2,13 @@
 class WorkerThread {
     constructor(parentPool) {
         this.parentPool = parentPool;
-        this.workerTask = {};
+        this.workerTask = null;
+        this.worker = null;
     }
     run(workerTask) {
+        if(this.worker){
+          this.worker.terminate();
+        }
         this.workerTask = workerTask;
         if (this.workerTask.script != null) {
             let worker = new Worker(workerTask.script); // create a new web worker

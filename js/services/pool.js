@@ -36,11 +36,10 @@ class Pool {
             workerThread.run(workerTask);
         } else {
             workerThread.worker.terminate(); //terminate worker if no task at hand
-            this.taskQueue.push(workerThread);
+            this.workerQueue.unshift(workerThread);
         }
     }
 }
 
-let pool = (new Pool).init();
-window.pool=pool;
+let pool = (new Pool()).init();
 export default pool;
