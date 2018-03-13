@@ -33,10 +33,11 @@ class TileRow {
         ObserverObj.toggleValue = !ObserverObj.toggleValue;
     }
     setTileSvg(tilesArr) {
-        tilesArr.forEach((tileHash) => {
-            let id = Object.keys(tileHash)[0];
-            let svg = tileHash[id];
-            Store.find('tile', id).svg = svg;
+        tilesArr.forEach((tileHash, index) => {
+            // let id = Object.keys(tileHash)[0];
+            let svg = tileHash[index];
+            this.tiles[index].svg = svg;
+            // Store.find('tile', id).svg = svg;
         });
     }
     processTilesCallback(event) {
@@ -46,9 +47,9 @@ class TileRow {
     }
     processTiles() {
         let tileArr = [];
-        this.tiles.forEach((tile) => {
+        this.tiles.forEach((tile, index) => {
             let tileHash = {};
-            tileHash[tile.id] = tile.hexCode;
+            tileHash[index] = tile.hexCode;
             tileArr.push(tileHash);
         });
         Pool.addWorkerTask('../js/workers/loadContent.js', this.processTilesCallback.bind(this), JSON.stringify(tileArr));

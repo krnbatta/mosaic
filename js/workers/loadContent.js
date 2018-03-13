@@ -13,28 +13,12 @@ this.addEventListener('message', (event) => {
 function fetchSvg(hexCodeHash) {
     let id = Object.keys(hexCodeHash)[0];
     let hexCode = hexCodeHash[id];
-    return new Promise(function(resolve, reject) {
-        var xhr = new XMLHttpRequest();
-        var url = "/color/" + hexCode;
-        xhr.open('GET', url);
-        xhr.onload = function() {
-            if (this.status >= 200 && this.status < 300) {
-                let hash = {};
-                hash[id] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xhr.response);
-                resolve(hash);
-            } else {
-                reject({
-                    status: this.status,
-                    statusText: xhr.statusText
-                });
-            }
-        };
-        xhr.onerror = function() {
-            reject({
-                status: this.status,
-                statusText: xhr.statusText
-            });
-        };
-        xhr.send();
+    return new Promise(async function(resolve, reject) {
+        let url = "/color/" + hexCode,
+            response = await fetch(url),
+            text = await response.text(),
+            hash = {};
+            hash[id] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(text);
+            resolve(hash);
     });
 }
