@@ -15,9 +15,9 @@ class Tile {
     getModelName() {
         return this._modelName;
     }
-    get tileRow() {
-        return Store.belongsTo('tile', this.tileRowId, 'tileRow');
-    }
+    // get tileRow() {
+    //     return Store.belongsTo('tile', this.tileRowId, 'tileRow');
+    // }
     get image() {
         return this.tileRow.image;
     }

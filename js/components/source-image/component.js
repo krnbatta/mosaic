@@ -30,29 +30,33 @@ class SourceImageComponent {
     }
     //Image is divided into tiles. R,G,B values are calculated from tiles. Tile record and tileRow record is created. The observer is binded with reference to tileRow creation which will hint DestinationImageComponent to proceed with further processing.
     sliceImage() {
+        var self = this;
         for (let i = 0; i < this.image.verticalTiles; i++) {
             let tileRow = Store.createRecord('tileRow', {
-                imageId: image.id,
+                image: this.image,
                 row: i,
             });
-            for (let j = 0; j < this.image.horizontalTiles; j++) {
-                let r = 0,
-                    g = 0,
-                    b = 0;
-                let imgData = this.canvasContext.getImageData(j * TILE_WIDTH, i * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
-                let pix = imgData.data;
-                r = pix[0];
-                g = pix[1];
-                b = pix[2];
-                let tile = Store.createRecord('tile', {
-                    tileRowId: tileRow.id,
-                    column: j,
-                    r: r,
-                    g: g,
-                    b: b
-                });
-            }
-            tileRow.processTiles();
+            setTimeout(function() {
+                for (let j = 0; j < self.image.horizontalTiles; j++) {
+                    let r = 0,
+                        g = 0,
+                        b = 0;
+                    let imgData = self.canvasContext.getImageData(j * TILE_WIDTH, i * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
+                    let pix = imgData.data;
+                    r = pix[0];
+                    g = pix[1];
+                    b = pix[2];
+                    let tile = Store.createRecord('tile', {
+                        tileRow: tileRow,
+                        column: j,
+                        r: r,
+                        g: g,
+                        b: b
+                    });
+                    tileRow.tiles.push(tile);
+                }
+                tileRow.processTiles();
+            }, 0);
         }
         ObserverObj.dependableKey = 'tileRowsCreated';
         ObserverObj.toggleValue = !ObserverObj.toggleValue;

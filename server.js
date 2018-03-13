@@ -44,4 +44,4 @@ http.createServer(function (req, res) {
   res.end();
 }).listen(8000, 'localhost');
 
-console.log('mosaic server running on port 8765');
+console.log('mosaic server running on port 8000');

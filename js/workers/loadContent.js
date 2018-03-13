@@ -20,7 +20,7 @@ function fetchSvg(hexCodeHash) {
         xhr.onload = function() {
             if (this.status >= 200 && this.status < 300) {
                 let hash = {};
-                hash[id] = xhr.response;
+                hash[id] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xhr.response);
                 resolve(hash);
             } else {
                 reject({

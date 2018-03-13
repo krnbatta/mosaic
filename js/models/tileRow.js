@@ -8,10 +8,11 @@ class TileRow {
     constructor(attributes) {
         this._modelName = "tile";
         this.id = id;
-        this.relationships = {
-            belongsTo: ['image'],
-            hasMany: ['tile']
-        }
+        // this.relationships = {
+        //     belongsTo: ['image'],
+        //     hasMany: ['tile']
+        // }
+        this.tiles = [];
         //column, imageId
         Object.assign(this, attributes);
         id++;
@@ -19,12 +20,12 @@ class TileRow {
     getModelName() {
         return this._modelName;
     }
-    get tiles() {
-        return Store.hasMany('tileRow', this.id, 'tile');
-    }
-    get image() {
-        return Store.belongsTo('tileRow', this.imageId, 'image');
-    }
+    // get tiles() {
+    //     return Store.hasMany('tileRow', this.id, 'tile');
+    // }
+    // get image() {
+    //     return Store.belongsTo('tileRow', this.imageId, 'image');
+    // }
     //this fires observer when all the tiles get svg from server.(row wise)
     addTileLoadObserver() {
         this.rowLoaded = true;

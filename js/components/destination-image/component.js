@@ -15,12 +15,12 @@ class DestinationImageComponent {
         });
         this.currentRow = 0;
         this.addEvents();
+        this.rowTileFillMap = {};
     }
     addEvents() {
         let image = Store.getRecord('mosaicImage');
         this.image = image;
         image.node.addEventListener('load', this.initiateCanvas.bind(this));
-        this.setTileRows;
     }
     initiateCanvas() {
         let canvas = document.getElementById('destination');
@@ -52,28 +52,51 @@ class DestinationImageComponent {
             return;
         }
         if (row == this.currentRow) {
+            let self = this;
             let tileRow = Store.findBy('tileRow', {
                 row
             });
-            if(!tileRow.rowLoaded){
-              return;
+            if (!tileRow.rowLoaded) {
+                return;
             }
-            this.fillImage(tileRow)
-            this.currentRow += 1;
-            this.loadImage(row + 1);
+            if (this.rowTileFillMap[row]) {
+                self.loadImage(row + 1);
+            } else {
+                self.rowTileFillMap[row] = 1;
+                let fillImagePromise = this.fillImage(tileRow)
+                fillImagePromise.then((val) => {
+                    self.currentRow += 1;
+                    self.loadImage(row + 1);
+                });
+            }
         }
     }
     //canvas image is filled with tileRow
     fillImage(tileRow) {
         let self = this;
-        tileRow.tiles.forEach((tile) => {
-            var svgImg = new Image();
-            svgImg.onload = function() {
-                self.canvasContext.drawImage(svgImg, tile.column * TILE_WIDTH, tileRow.row * TILE_HEIGHT);
+        return new Promise(function(resolve) {
+            function fillChunk() {
+                let tilesChunk = tileRow.tiles.splice(0, 20);
+                tilesChunk.forEach((tile) => {
+                    var svgImg = new Image();
+                    svgImg.onload = function() {
+                        self.canvasContext.drawImage(svgImg, tile.column * TILE_WIDTH, tileRow.row * TILE_HEIGHT);
+                    }
+                    svgImg.src = tile.svg;
+                });
+                if (tileRow.tiles.length > 0) {
+                    setTimeout(function() {
+                        fillChunk();
+                    }, 0);
+                } else {
+                    resolve();
+                }
             }
-            svgImg.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(tile.svg);
+            setTimeout(function() {
+                fillChunk();
+            }, 0);
+
         });
-        //free tile row now!
     }
 }
 export default DestinationImageComponent;
