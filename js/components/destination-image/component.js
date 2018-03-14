@@ -72,25 +72,27 @@ class DestinationImageComponent {
         }
     }
     //canvas image is filled with tileRow
-    async fillImage(tileRow) {
+    fillImage(tileRow) {
         let self = this;
         let promisesArr = [];
-
-        function fillRow() {
-            tileRow.tiles.forEach((tile) => {
-                let promise = new Promise(function(resolve) {
-                    var svgImg = new Image();
-                    svgImg.onload = function() {
-                        self.canvasContext.drawImage(svgImg, tile.column * TILE_WIDTH, tileRow.row * TILE_HEIGHT);
-                        resolve();
-                    }
-                    svgImg.src = tile.svg;
+        let promise = new Promise(function(resolve) {
+            window.requestAnimationFrame(function fillRow() {
+                tileRow.tiles.forEach((tile) => {
+                    let p = new Promise(function(res) {
+                        var svgImg = new Image();
+                        svgImg.onload = function() {
+                            self.canvasContext.drawImage(svgImg, tile.column * TILE_WIDTH, tileRow.row * TILE_HEIGHT);
+                            res(tileRow);
+                        }
+                        svgImg.src = tile.svg;
+                    });
+                    resolve();
+                    promisesArr.push(p);
                 });
-                promisesArr.push(promise);
             });
-        }
-        await window.requestAnimationFrame(fillRow);
-        return Promise.all(promisesArr)
+        });
+        promisesArr.push(promise);
+        return Promise.all(promisesArr);
     }
 }
 
